@@ -49,7 +49,7 @@ function removeCategory(i){const name=categories[i],used=products.filter(p=>p.ca
 function setImage(i,e){const file=e.target.files[0];if(!file)return;if(file.size>2*1024*1024){alert("图片建议小于 2MB，请压缩后再上传。");return}const r=new FileReader();r.onload=()=>{products[i].image=r.result;document.getElementById(`preview-${i}`).src=r.result};r.readAsDataURL(file)}
 function addProduct(){products.unshift({id:Date.now(),name:"新商品",category:"美妆彩妆",price:0,sales:0,brand:"",desc:"请输入商品简介",image:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f8e1e7'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%23b85b76' font-size='28'%3E上传商品图片%3C/text%3E%3C/svg%3E"});render();scrollTo({top:0,behavior:"smooth"})}
 function removeProduct(i){if(confirm(`确定删除“${products[i].name}”吗？`)){products.splice(i,1);render()}}
-function saveAll(){try{localStorage.setItem(KEY,JSON.stringify(products));localStorage.setItem(CATEGORY_KEY,JSON.stringify(categories));const n=document.getElementById("notice");n.classList.add("show");setTimeout(()=>n.classList.remove("show"),2600)}catch(e){alert("保存失败：图片数据可能太大。请缩小图片尺寸，或先导出备份。")}}
+function saveAll(){try{localStorage.setItem(KEY,JSON.stringify(products));localStorage.setItem(CATEGORY_KEY,JSON.stringify(categories));localStorage.setItem("japanSelectProductsUpdatedAt",String(Date.now()));if("BroadcastChannel" in window){const channel=new BroadcastChannel("japanSelectProductUpdates");channel.postMessage({type:"products-updated",at:Date.now()});channel.close()}const n=document.getElementById("notice");n.textContent="已保存并同步，切换到用户页面即可看到最新内容。";n.classList.add("show");setTimeout(()=>n.classList.remove("show"),2600)}catch(e){alert("保存失败：图片数据可能太大。请缩小图片尺寸，或先导出备份。")}}
 function exportData(){const blob=new Blob([JSON.stringify(products,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="日选商店-商品备份.json";a.click();URL.revokeObjectURL(a.href)}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);if(!Array.isArray(data))throw 0;products=data;render();saveAll()}catch(err){alert("导入失败，请选择从本页面导出的 JSON 备份文件。")}};r.readAsText(f)}
 function importExcel(e){
@@ -77,6 +77,8 @@ function importExcel(e){
       categories=[...new Set([...categories,...products.map(p=>p.category).filter(Boolean)])];
       localStorage.setItem(CATEGORY_KEY,JSON.stringify(categories));
       localStorage.setItem(KEY,JSON.stringify(products));
+      localStorage.setItem("japanSelectProductsUpdatedAt",String(Date.now()));
+      if("BroadcastChannel" in window){const channel=new BroadcastChannel("japanSelectProductUpdates");channel.postMessage({type:"products-updated",at:Date.now()});channel.close()}
       render();
       alert(`已成功导入 ${products.length} 件商品。请打开用户页面刷新查看。`);
     }catch(err){

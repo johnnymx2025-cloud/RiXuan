@@ -507,6 +507,26 @@ let currentOrderText = "";
 
 let categories = [];
 
+function refreshProductsFromStorage() {
+  try {
+    const savedProducts = localStorage.getItem("japanSelectProducts");
+    if (!savedProducts) return false;
+    const parsed = JSON.parse(savedProducts);
+    if (!Array.isArray(parsed) || !parsed.length) return false;
+    products.splice(0, products.length, ...parsed);
+    categories = ["全部", ...new Set(products.map(p => p.category))];
+    if (!categories.includes(activeCategory)) activeCategory = "全部";
+    document.getElementById("categories").innerHTML = categories.map(c =>
+      `<button class="category-btn ${c===activeCategory?"active":""}" onclick="setCategory('${c}', this)">${c}</button>`
+    ).join("");
+    renderProducts();
+    return true;
+  } catch (error) {
+    console.warn("最新商品数据读取失败", error);
+    return false;
+  }
+}
+
 function init() {
   try {
     const savedProducts = localStorage.getItem("japanSelectProducts");
@@ -723,6 +743,17 @@ async function copyOrderText() {
 }
 
 init();
+window.addEventListener("storage", event => {
+  if (event.key === "japanSelectProducts" || event.key === "japanSelectProductsUpdatedAt") refreshProductsFromStorage();
+});
+window.addEventListener("pageshow", refreshProductsFromStorage);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") refreshProductsFromStorage();
+});
+if ("BroadcastChannel" in window) {
+  const productChannel = new BroadcastChannel("japanSelectProductUpdates");
+  productChannel.onmessage = refreshProductsFromStorage;
+}
 </script>
 </body>
 </html>
