@@ -527,7 +527,24 @@ function refreshProductsFromStorage() {
   }
 }
 
-function init() {
+async function loadPublishedProducts() {
+  try {
+    const response = await fetch(`products.json?v=${Date.now()}`, {cache:"no-store"});
+    if (!response.ok) return;
+    const published = await response.json();
+    if (!Array.isArray(published) || !published.length) return;
+    const hasLocalEdits = Boolean(localStorage.getItem("japanSelectProductsUpdatedAt"));
+    if (!hasLocalEdits) {
+      products.splice(0, products.length, ...published);
+      localStorage.setItem("japanSelectProducts", JSON.stringify(products));
+    }
+  } catch (error) {
+    console.info("暂未找到线上商品数据，继续使用页面内置商品。", error);
+  }
+}
+
+async function init() {
+  await loadPublishedProducts();
   try {
     const savedProducts = localStorage.getItem("japanSelectProducts");
     if (savedProducts) {
