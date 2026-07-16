@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>日本好物 DEMO</title>
+<style>
+:root {
+  --bg:#fff5f5;
+  --paper:#ffffff;
+  --ink:#321e27;
+  --muted:#806873;
+  --line:#f0d6dc;
+  --accent:#c72558;
+  --accent-dark:#95183e;
+  --gold:#d4974d;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(180deg,#fff8f8 0,#fff2f4 420px,#fff8f6 100%);
+  color:var(--ink);
+}
+button{font:inherit}
+.nav{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(255,255,255,.94);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(10px);
+}
+.nav-inner{
+  max-width:1240px;
+  margin:auto;
+  height:72px;
+  padding:0 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.brand{
+  font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;
+  font-size:24px;
+  letter-spacing:.08em;
+}
+.brand small{
+  display:block;
+  color:var(--accent);
+  font-family:"Yu Gothic",sans-serif;
+  font-size:10px;
+  letter-spacing:.2em;
+  margin-top:4px;
+}
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:28px;
+  font-size:13px;
+}
+.nav-links a{
+  color:#4d524d;
+  text-decoration:none;
+}
+.cart-btn{
+  border:0;
+  border-radius:999px;
+  background:var(--accent);
+  color:#fff;
+  padding:10px 16px;
+  cursor:pointer;
+}
+.cart-btn:hover{background:var(--accent-dark);color:#fff}
+
+.hero{
+  max-width:1240px;
+  margin:24px auto 0;
+  padding:42px 22px;
+  border:1px solid #f3d0d9;
+  border-radius:26px;
+  background:radial-gradient(circle at 85% 20%,rgba(255,255,255,.8),transparent 30%),linear-gradient(120deg,#f9d9df,#f5b9c8 58%,#e89ab2);
+  box-shadow:0 18px 50px rgba(154,42,76,.12);
+}
+.hero h1{
+  font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
+  font-size:42px;
+  font-weight:500;
+  margin:0 0 12px;
+  letter-spacing:.05em;
+}
+.hero p{
+  color:var(--muted);
+  max-width:680px;
+  line-height:1.8;
+  margin:0;
+}
+
+.categories{
+  max-width:1240px;
+  margin:22px auto 0;
+  padding:0 22px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.category-btn{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.9);
+  border-radius:999px;
+  padding:8px 14px;
+  cursor:pointer;
+  color:#666b66;
+}
+.category-btn.active{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+
+.main{
+  max-width:1240px;
+  margin:auto;
+  padding:22px;
+}
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin-bottom:16px;
+}
+.section-head h2{
+  font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
+  font-size:25px;
+  font-weight:600;
+  margin:0;
+}
+.section-head span{font-size:12px;color:#92958f}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+.card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 8px 26px rgba(104,35,57,.07);
+  transition:transform .2s,box-shadow .2s;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(104,35,57,.14)}
+.card img{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  display:block;
+  border-bottom:1px solid var(--line);
+}
+.card-body{padding:15px}
+.card-name{
+  min-height:46px;
+  font-size:15px;
+  line-height:1.5;
+  font-weight:700;
+  color:#342229;
+}
+.price-box{margin-top:12px;padding-top:11px;border-top:1px solid #f0dce1}
+.price-line{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px}
+.price-label{font-size:11px;color:#8c737c;white-space:nowrap}
+.domestic-price{font-size:13px;color:#999;text-decoration:line-through;text-decoration-thickness:1px}
+.overseas-line{margin-top:5px}
+.overseas-line .price-label{color:var(--accent);font-weight:700}
+.overseas-price{
+  color:var(--accent);
+  font-family:Georgia,serif;
+  font-size:23px;
+  font-weight:700;
+}
+.overseas-price small{font-family:"PingFang SC",sans-serif;font-size:10px;font-weight:500;margin-right:2px}
+.add{
+  margin-top:12px;
+  width:100%;
+  border:0;
+  border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),#e14e79);
+  color:#fff;
+  padding:10px;
+  cursor:pointer;
+}
+.add:hover{background:var(--accent-dark);color:#fff}
+
+.drawer{
+  position:fixed;
+  right:-430px;
+  top:0;
+  width:410px;
+  height:100vh;
+  background:var(--paper);
+  z-index:30;
+  box-shadow:-14px 0 30px rgba(0,0,0,.12);
+  transition:.25s;
+  display:flex;
+  flex-direction:column;
+}
+.drawer.open{right:0}
+.drawer-head{
+  padding:20px 22px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.drawer-head h3{margin:0;font-family:"Yu Mincho",serif}
+.close{
+  border:0;
+  background:transparent;
+  font-size:26px;
+  cursor:pointer;
+}
+.cart-list{
+  flex:1;
+  overflow:auto;
+  padding:0 22px;
+}
+.cart-item{
+  display:grid;
+  grid-template-columns:64px 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+}
+.cart-item img{width:64px;height:64px;object-fit:cover}
+.cart-item-name{font-size:12px;line-height:1.4}
+.cart-item-price{font-size:12px;color:var(--accent);margin-top:5px}
+.qty{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:7px;
+}
+.qty button{
+  width:24px;
+  height:24px;
+  border:1px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+}
+.remove{
+  border:0;
+  background:transparent;
+  color:#aaa;
+  cursor:pointer;
+  font-size:11px;
+}
+.cart-footer{
+  border-top:1px solid var(--line);
+  padding:18px 22px 22px;
+}
+.total-line{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+.checkout{
+  width:100%;
+  border:0;
+  background:linear-gradient(135deg,var(--accent),#e14e79);
+  color:#fff;
+  padding:13px;
+  cursor:pointer;
+  letter-spacing:.08em;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(24,27,24,.46);
+  z-index:40;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.modal.open{display:flex}
+.checkout-panel{
+  width:min(980px,96vw);
+  max-height:92vh;
+  overflow:auto;
+  background:var(--paper);
+  border:1px solid var(--line);
+  padding:26px;
+}
+.checkout-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--line);
+  padding-bottom:14px;
+}
+.checkout-head h2{margin:0;font-family:"Yu Mincho",serif}
+.summary{
+  display:grid;
+  grid-template-columns:1fr 300px;
+  gap:24px;
+  margin-top:20px;
+}
+.summary-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+.summary-table th,.summary-table td{
+  border-bottom:1px solid var(--line);
+  padding:12px 8px;
+  text-align:left;
+  vertical-align:top;
+}
+.summary-table th{color:#777;font-weight:600}
+.order-box{
+  border:1px solid var(--line);
+  padding:18px;
+  height:max-content;
+  position:sticky;
+  top:0;
+}
+.order-box h3{margin-top:0;font-family:"Yu Mincho",serif}
+.order-row{
+  display:flex;
+  justify-content:space-between;
+  margin:10px 0;
+  font-size:13px;
+}
+.order-row.total{
+  border-top:1px solid var(--line);
+  padding-top:12px;
+  font-size:17px;
+  font-weight:700;
+}
+.confirm{
+  margin-top:16px;
+  width:100%;
+  border:0;
+  background:var(--accent);
+  color:#fff;
+  padding:12px;
+}
+.empty{
+  padding:50px 20px;
+  text-align:center;
+  color:#999;
+}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .summary{grid-template-columns:1fr}
+  .order-box{position:static}
+}
+@media(max-width:680px){
+  .nav-inner{height:auto;padding:14px 16px;gap:12px}
+  .nav-links a{display:none}
+  .nav-links a.admin-link{display:block;font-size:12px;color:var(--accent);white-space:nowrap}
+  .hero{padding:28px 16px}
+  .hero h1{font-size:32px}
+  .categories,.main{padding-left:16px;padding-right:16px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .hero{margin:12px 12px 0;padding:26px 18px;border-radius:20px}
+  .hero h1{font-size:29px}
+  .card-body{padding:11px}
+  .card-name{font-size:13px;min-height:42px}
+  .overseas-price{font-size:20px}
+  .price-label{font-size:10px}
+  .nav-links{gap:8px}
+  .drawer{width:100%;right:-100%}
+  .checkout-panel{padding:18px}
+  .summary-table th:nth-child(3),.summary-table td:nth-child(3){display:none}
+}
+
+.qr-result{
+  display:none;
+  margin-top:18px;
+  border-top:1px solid var(--line);
+  padding-top:18px;
+  text-align:center;
+}
+.qr-result.show{display:block}
+.qr-result h3{
+  margin:0 0 8px;
+  font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
+}
+.qr-result p{
+  margin:0 auto 14px;
+  max-width:560px;
+  color:#777c76;
+  font-size:12px;
+  line-height:1.7;
+}
+.qr-box{
+  width:280px;
+  min-height:280px;
+  margin:0 auto;
+  padding:14px;
+  background:#fff;
+  border:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.qr-box img{
+  width:250px;
+  height:250px;
+  display:block;
+}
+.qr-note{
+  margin-top:12px!important;
+  color:#999!important;
+}
+.copy-order{
+  margin-top:12px;
+  border:1px solid #313631;
+  background:transparent;
+  padding:10px 18px;
+  cursor:pointer;
+}
+.copy-order:hover{background:#313631;color:#fff}
+
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">日选商店<small>JAPAN SELECT DEMO</small></div>
+    <nav class="nav-links">
+      <a href="#products">全部商品</a>
+      <a href="#products">美妆药妆</a>
+      <a href="#products">零食伴手礼</a>
+      <a href="#products">服饰文创</a>
+      <a href="admin.html" class="admin-link">商品管理</a>
+      <button class="cart-btn" onclick="toggleCart()">购物车（<span id="cartCount">0</span>）</button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>日本日常好物精选</h1>
+  <p>东京热门美妆与日本限定好物，一页轻松挑选。选中商品后可随时查看完整清单、数量与金额。</p>
+</section>
+
+<div class="categories" id="categories"></div>
+
+<main class="main" id="products">
+  <div class="section-head">
+    <h2>商品一览</h2>
+    <span id="countText"></span>
+  </div>
+  <section class="grid" id="grid"></section>
+</main>
+
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>购物车</h3>
+    <button class="close" onclick="toggleCart()">×</button>
+  </div>
+  <div class="cart-list" id="cartList"></div>
+  <div class="cart-footer">
+    <div class="total-line"><span>商品数量</span><strong id="cartQty">0</strong></div>
+    <div class="total-line"><span>合计</span><strong id="cartTotal">¥0</strong></div>
+    <button class="checkout" onclick="openCheckout()">查看结算信息</button>
+  </div>
+</aside>
+
+<div class="modal" id="checkoutModal">
+  <div class="checkout-panel">
+    <div class="checkout-head">
+      <h2>订单确认</h2>
+      <button class="close" onclick="closeCheckout()">×</button>
+    </div>
+    <div class="summary">
+      <div id="summaryList"></div>
+      <aside class="order-box">
+        <h3>订单信息</h3>
+        <div class="order-row"><span>商品种类</span><strong id="summaryKinds">0</strong></div>
+        <div class="order-row"><span>商品总数</span><strong id="summaryQty">0</strong></div>
+        <div class="order-row"><span>商品金额</span><strong id="summarySubtotal">¥0</strong></div>
+        <div class="order-row"><span>国际运费</span><strong>待确认</strong></div>
+        <div class="order-row total"><span>当前合计</span><strong id="summaryTotal">¥0</strong></div>
+        <button class="confirm" onclick="generateOrderQR()">确认提交并生成二维码</button>
+        <div class="qr-result" id="qrResult">
+          <h3>订单分享二维码</h3>
+          <p>其他用户扫码后可直接查看完整订单清单，无需截取长页面。</p>
+          <div class="qr-box" id="qrBox"></div>
+          <button class="copy-order" onclick="copyOrderText()">复制订单文字</button>
+          <p class="qr-note" id="qrNote"></p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<script>
+const products = [{"id": 1, "name": "倩丽素肌蜜粉", "category": "美妆彩妆", "price": 89, "sales": 1280, "brand": "club-cosmetics", "desc": "药妆店断货王，细腻控油", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZDdlMiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiNhOTI2NTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmQ3ZTIiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkNMVUJDT1NNPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjYTkyNjU4Ij7lgKnkuL3ntKDogozonJznsok8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiNhOTI2NTgiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 2, "name": "Elegance E大饼 01", "category": "美妆彩妆", "price": 699, "sales": 956, "brand": "elegance", "desc": "日本专柜热卖定妆蜜粉", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZDdlMiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiNhOTI2NTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmQ3ZTIiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkVMRUdBTkNFPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjYTkyNjU4Ij5FbGVnYW5jZSBF5aSn6aW8IDAxPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjU1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjYTkyNjU4IiBvcGFjaXR5PSIuNzUiPuaXpeacrOebtOmCriDCtyDmraPlk4Hku6PotK08L3RleHQ+CiAgICA8L3N2Zz4="}, {"id": 3, "name": "CANMAKE棉花糖粉饼", "category": "美妆彩妆", "price": 79, "sales": 3680, "brand": "canmake", "desc": "高性价比开架底妆", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZDdlMiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiNhOTI2NTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmQ3ZTIiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkNBTk1BS0U8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNhOTI2NTgiPkNBTk1BS0Xmo4noirHns5bnsonppbw8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiNhOTI2NTgiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 4, "name": "Kiss Me纤长睫毛膏", "category": "美妆彩妆", "price": 88, "sales": 2410, "brand": "kissme", "desc": "防水持妆，不易晕染", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZDdlMiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiNhOTI2NTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmQ3ZTIiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPktJU1NNRTwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2E5MjY1OCI+S2lzcyBNZee6pOmVv+edq+avm+iGjzwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 5, "name": "IHADA敏感肌防晒粉饼", "category": "美妆彩妆", "price": 119, "sales": 1432, "brand": "ihada", "desc": "温和配方，敏感肌友好", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZDdlMiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiNhOTI2NTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmQ3ZTIiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPklIQURBPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjYTkyNjU4Ij5JSEFEQeaVj+aEn+iCjOmYsuaZkueyiemlvDwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iI2E5MjY1OCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 6, "name": "CHANEL 186双头唇釉", "category": "专柜护肤", "price": 328, "sales": 628, "brand": "chanel", "desc": "热门色号，机场免税精选", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VhZGNmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM2NTQyYTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlYWRjZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkNIQU5FTDwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzY1NDJhOCI+Q0hBTkVMIDE4NuWPjOWktOWUh+mHiTwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 7, "name": "SK-II神仙水 230ml", "category": "专柜护肤", "price": 899, "sales": 785, "brand": "skii", "desc": "日本专柜经典护肤水", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VhZGNmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM2NTQyYTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlYWRjZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlNLSUk8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM2NTQyYTgiPlNLLUlJ56We5LuZ5rC0IDIzMG1sPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjU1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjNjU0MmE4IiBvcGFjaXR5PSIuNzUiPuaXpeacrOebtOmCriDCtyDmraPlk4Hku6PotK08L3RleHQ+CiAgICA8L3N2Zz4="}, {"id": 8, "name": "CPB长管隔离", "category": "专柜护肤", "price": 429, "sales": 1120, "brand": "cpb", "desc": "自然提亮，通勤妆前", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VhZGNmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM2NTQyYTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlYWRjZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkNQQjwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzY1NDJhOCI+Q1BC6ZW/566h6ZqU56a7PC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjU1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjNjU0MmE4IiBvcGFjaXR5PSIuNzUiPuaXpeacrOebtOmCriDCtyDmraPlk4Hku6PotK08L3RleHQ+CiAgICA8L3N2Zz4="}, {"id": 9, "name": "资生堂悦薇水乳套装", "category": "专柜护肤", "price": 699, "sales": 516, "brand": "shiseido", "desc": "抗老保湿，适合送礼", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VhZGNmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM2NTQyYTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlYWRjZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlNISVNFSURPPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNjU0MmE4Ij7otYTnlJ/loILmgqbolofmsLTkubPlpZfoo4U8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM2NTQyYTgiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 10, "name": "POLA黑BA面霜", "category": "专柜护肤", "price": 1180, "sales": 223, "brand": "pola", "desc": "高端抗老护理", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VhZGNmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM2NTQyYTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlYWRjZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlBPTEE8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM2NTQyYTgiPlBPTEHpu5FCQemdoumcnDwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzY1NDJhOCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 11, "name": "第一三共新LULU感冒药", "category": "药妆个护", "price": 108, "sales": 1670, "brand": "lulu", "desc": "日本家庭常备药", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2Q5ZjVlOCIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMxNzdhNTQiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkOWY1ZTgiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkxVTFU8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNzdhNTQiPuesrOS4gOS4ieWFseaWsExVTFXmhJ/lhpLoja88L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMxNzdhNTQiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 12, "name": "乐松膏药贴", "category": "药妆个护", "price": 69, "sales": 2890, "brand": "loxonin", "desc": "肩颈腰腿日常护理", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2Q5ZjVlOCIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMxNzdhNTQiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkOWY1ZTgiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkxPWE9OSU48L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNzdhNTQiPuS5kOadvuiGj+iNr+i0tDwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 13, "name": "撒隆巴斯镇痛贴", "category": "药妆个护", "price": 55, "sales": 2210, "brand": "salonpas", "desc": "经典外用贴剂", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2Q5ZjVlOCIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMxNzdhNTQiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkOWY1ZTgiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlNBTE9OUEFTPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTc3YTU0Ij7mkpLpmoblt7Tmlq/plYfnl5votLQ8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMxNzdhNTQiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 14, "name": "杜得乐止汗石", "category": "药妆个护", "price": 79, "sales": 1785, "brand": "deonatulle", "desc": "长效清爽，夏季热门", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2Q5ZjVlOCIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMxNzdhNTQiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkOWY1ZTgiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkRFT05BVFVMPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTc3YTU0Ij7mnZzlvpfkuZDmraLmsZfnn7M8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMxNzdhNTQiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 15, "name": "参天FX眼药水", "category": "药妆个护", "price": 45, "sales": 3200, "brand": "sante", "desc": "清凉型眼部护理", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2Q5ZjVlOCIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMxNzdhNTQiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkOWY1ZTgiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlNBTlRFPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTc3YTU0Ij7lj4LlpKlGWOecvOiNr+awtDwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzE3N2E1NCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 16, "name": "ROYCE薄荷生巧", "category": "零食伴手礼", "price": 98, "sales": 1540, "brand": "royce", "desc": "机场人气新品", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZjBjOSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM5YTVjMDAiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmYwYzkiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlJPWUNFPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOWE1YzAwIj5ST1lDReiWhOiNt+eUn+W3pzwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 17, "name": "白色恋人 18枚", "category": "零食伴手礼", "price": 108, "sales": 1870, "brand": "shiroi", "desc": "北海道经典伴手礼", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZjBjOSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM5YTVjMDAiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmYwYzkiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlNISVJPSTwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzlhNWMwMCI+55m96Imy5oGL5Lq6IDE45p6aPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjU1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjOWE1YzAwIiBvcGFjaXR5PSIuNzUiPuaXpeacrOebtOmCriDCtyDmraPlk4Hku6PotK08L3RleHQ+CiAgICA8L3N2Zz4="}, {"id": 18, "name": "东京香蕉限定礼盒", "category": "零食伴手礼", "price": 119, "sales": 2310, "brand": "banana", "desc": "联名限定包装", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZjBjOSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM5YTVjMDAiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmYwYzkiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkJBTkFOQTwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzlhNWMwMCI+5Lic5Lqs6aaZ6JWJ6ZmQ5a6a56S855uSPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjU1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjOWE1YzAwIiBvcGFjaXR5PSIuNzUiPuaXpeacrOebtOmCriDCtyDmraPlk4Hku6PotK08L3RleHQ+CiAgICA8L3N2Zz4="}, {"id": 19, "name": "NY芝士卷 8枚", "category": "零食伴手礼", "price": 158, "sales": 1435, "brand": "nycheese", "desc": "东京排队人气点心", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZjBjOSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM5YTVjMDAiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmYwYzkiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPk5ZQ0hFRVNFPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOWE1YzAwIj5OWeiKneWjq+WNtyA45p6aPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjU1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjOWE1YzAwIiBvcGFjaXR5PSIuNzUiPuaXpeacrOebtOmCriDCtyDmraPlk4Hku6PotK08L3RleHQ+CiAgICA8L3N2Zz4="}, {"id": 20, "name": "Press Butter Sand", "category": "零食伴手礼", "price": 128, "sales": 1160, "brand": "pbs", "desc": "焦糖夹心曲奇", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZjBjOSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM5YTVjMDAiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmYwYzkiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlBCUzwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzlhNWMwMCI+UHJlc3MgQnV0dGVyIFNhbjwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzlhNWMwMCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 21, "name": "Arc'teryx Beta Jacket", "category": "服饰户外", "price": 3299, "sales": 184, "brand": "arcteryx", "desc": "日本线下门店热门款", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RiZTlmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMyNDViYTMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkYmU5ZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkFSQ1RFUllYPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMjQ1YmEzIj5BcmMmI3gyNzt0ZXJ5eCBCZXRhIEo8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMyNDViYTMiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 22, "name": "Montbell轻量羽绒", "category": "服饰户外", "price": 899, "sales": 476, "brand": "montbell", "desc": "高性价比日本户外", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RiZTlmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMyNDViYTMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkYmU5ZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPk1PTlRCRUxMPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMjQ1YmEzIj5Nb250YmVsbOi9u+mHj+e+vee7kjwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 23, "name": "Patagonia抓绒外套", "category": "服饰户外", "price": 1099, "sales": 332, "brand": "patagonia", "desc": "通勤户外两用", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RiZTlmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMyNDViYTMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkYmU5ZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlBBVEFHT05JPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMjQ1YmEzIj5QYXRhZ29uaWHmipPnu5LlpJblpZc8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMyNDViYTMiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 24, "name": "Onitsuka Tiger日本制", "category": "服饰户外", "price": 1399, "sales": 583, "brand": "onitsuka", "desc": "NIPPON MADE系列", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RiZTlmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMyNDViYTMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkYmU5ZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPk9OSVRTVUtBPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMjQ1YmEzIj5Pbml0c3VrYSBUaWdlcuaXpeacrDwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 25, "name": "BAO BAO经典托特包", "category": "服饰户外", "price": 2699, "sales": 269, "brand": "baobao", "desc": "三宅一生经典款", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RiZTlmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMyNDViYTMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkYmU5ZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkJBT0JBTzwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzI0NWJhMyI+QkFPIEJBT+e7j+WFuOaJmOeJueWMhTwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 26, "name": "PORTER Tanker单肩包", "category": "服饰户外", "price": 1280, "sales": 391, "brand": "porter", "desc": "日本制轻量通勤包", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RiZTlmZiIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMyNDViYTMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkYmU5ZmYiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlBPUlRFUjwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzI0NWJhMyI+UE9SVEVSIFRhbmtlcuWNleiCqeWMhTwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzI0NWJhMyIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 27, "name": "CHANEL中古链条包", "category": "中古奢品", "price": 18999, "sales": 42, "brand": "chanel-bag", "desc": "日本中古店精选", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VlZTRkYSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM2MTQ3MzIiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlZWU0ZGEiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkNIQU5FTEJBPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNjE0NzMyIj5DSEFORUzkuK3lj6Tpk77mnaHljIU8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM2MTQ3MzIiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 28, "name": "Hermès中古凯莉包", "category": "中古奢品", "price": 88999, "sales": 18, "brand": "hermes", "desc": "专业鉴定，一物一拍", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VlZTRkYSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM2MTQ3MzIiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlZWU0ZGEiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkhFUk1FUzwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzYxNDczMiI+SGVybcOoc+S4reWPpOWHr+iOieWMhTwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 29, "name": "Rolex中古日志型", "category": "中古奢品", "price": 75999, "sales": 26, "brand": "rolex", "desc": "稀有款式，支持鉴定", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VlZTRkYSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM2MTQ3MzIiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlZWU0ZGEiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlJPTEVYPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNjE0NzMyIj5Sb2xleOS4reWPpOaXpeW/l+WeizwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 30, "name": "LV中古老花钱包", "category": "中古奢品", "price": 2299, "sales": 156, "brand": "lv", "desc": "成色透明，性价比高", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VlZTRkYSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM2MTQ3MzIiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlZWU0ZGEiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkxWPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNjE0NzMyIj5MVuS4reWPpOiAgeiKsemSseWMhTwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzYxNDczMiIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 31, "name": "富士Kitty联名拍立得", "category": "数码家电", "price": 899, "sales": 275, "brand": "instax", "desc": "限量联名款", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RmZTZlYSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMzNDRiNTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzM0NGI1OCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkZmU2ZWEiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzM0NGI1OCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPklOU1RBWDwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzM0NGI1OCI+5a+M5aOrS2l0dHnogZTlkI3mi43nq4vlvpc8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMzNDRiNTgiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 32, "name": "Sony降噪耳机", "category": "数码家电", "price": 1999, "sales": 618, "brand": "sony", "desc": "日本电器城热门", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RmZTZlYSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMzNDRiNTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzM0NGI1OCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkZmU2ZWEiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzM0NGI1OCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlNPTlk8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzNDRiNTgiPlNvbnnpmY3lmarogLPmnLo8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMzNDRiNTgiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 33, "name": "松下纳米水离子吹风机", "category": "数码家电", "price": 1599, "sales": 745, "brand": "panasonic", "desc": "高端护发家电", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RmZTZlYSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMzNDRiNTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzM0NGI1OCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkZmU2ZWEiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzM0NGI1OCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlBBTkFTT05JPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMzQ0YjU4Ij7mnb7kuIvnurPnsbPmsLTnprvlrZDlkLnpo47mnLo8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMzNDRiNTgiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 34, "name": "一次性胶片相机", "category": "数码家电", "price": 129, "sales": 1320, "brand": "filmcam", "desc": "复古拍照热门单品", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RmZTZlYSIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiMzNDRiNTgiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzM0NGI1OCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNkZmU2ZWEiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzM0NGI1OCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkZJTE1DQU08L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzNDRiNTgiPuS4gOasoeaAp+iDtueJh+ebuOacujwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzM0NGI1OCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 35, "name": "任天堂马里奥限定挂件", "category": "IP文创", "price": 129, "sales": 1480, "brand": "mario", "desc": "Nintendo Store限定", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZTNmMyIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM5YTNhNzMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmUzZjMiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPk1BUklPPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOWEzYTczIj7ku7vlpKnloILpqazph4zlpaXpmZDlrprmjILku7Y8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5YTNhNzMiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 36, "name": "宝可梦中心皮卡丘公仔", "category": "IP文创", "price": 199, "sales": 2160, "brand": "pikachu", "desc": "日本限定收藏款", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZTNmMyIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM5YTNhNzMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmUzZjMiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlBJS0FDSFU8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM5YTNhNzMiPuWuneWPr+aipuS4reW/g+earuWNoeS4mOWFrOS7lDwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 37, "name": "Chiikawa毛绒挂件", "category": "IP文创", "price": 159, "sales": 3280, "brand": "chiikawa", "desc": "热门角色随机款", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZTNmMyIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM5YTNhNzMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmUzZjMiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkNISUlLQVdBPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjUyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOWEzYTczIj5DaGlpa2F3Yeavm+e7kuaMguS7tjwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 38, "name": "三丽鸥限定钥匙扣", "category": "IP文创", "price": 99, "sales": 2510, "brand": "sanrio", "desc": "日本地区限定", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZTNmMyIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM5YTNhNzMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmUzZjMiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlNBTlJJTzwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzlhM2E3MyI+5LiJ5Li96bil6ZmQ5a6a6ZKl5YyZ5omjPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjU1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjOWEzYTczIiBvcGFjaXR5PSIuNzUiPuaXpeacrOebtOmCriDCtyDmraPlk4Hku6PotK08L3RleHQ+CiAgICA8L3N2Zz4="}, {"id": 39, "name": "PLOTTER Tokyo手帐", "category": "IP文创", "price": 699, "sales": 246, "brand": "plotter", "desc": "日系极简皮革手帐", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZTNmMyIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM5YTNhNzMiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNmZmUzZjMiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzlhM2E3MyIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPlBMT1RURVI8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM5YTNhNzMiPlBMT1RURVIgVG9reW/miYvluJA8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5YTNhNzMiIG9wYWNpdHk9Ii43NSI+5pel5pys55u06YKuIMK3IOato+WTgeS7o+i0rTwvdGV4dD4KICAgIDwvc3ZnPg=="}, {"id": 40, "name": "江户切子玻璃杯", "category": "小众限定", "price": 1280, "sales": 118, "brand": "edo", "desc": "银座精选传统工艺", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2U5ZjBkOCIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM1ODZkMjAiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlOWYwZDgiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkVETzwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzU4NmQyMCI+5rGf5oi35YiH5a2Q546755KD5p2vPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjU1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjNTg2ZDIwIiBvcGFjaXR5PSIuNzUiPuaXpeacrOebtOmCriDCtyDmraPlk4Hku6PotK08L3RleHQ+CiAgICA8L3N2Zz4="}, {"id": 41, "name": "Le Labo东京城市限定", "category": "小众限定", "price": 2380, "sales": 164, "brand": "lelabo", "desc": "南青山门店热门", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2U5ZjBkOCIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM1ODZkMjAiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlOWYwZDgiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkxFTEFCTzwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzU4NmQyMCI+TGUgTGFib+S4nOS6rOWfjuW4gumZkOWumjwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 42, "name": "Buly 1803身体乳", "category": "小众限定", "price": 699, "sales": 207, "brand": "buly", "desc": "复古包装，送礼热门", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2U5ZjBkOCIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM1ODZkMjAiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlOWYwZDgiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkJVTFk8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM1ODZkMjAiPkJ1bHkgMTgwM+i6q+S9k+S5szwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}, {"id": 43, "name": "京都糖果屋手作钥匙扣", "category": "小众限定", "price": 189, "sales": 389, "brand": "nanaco", "desc": "京都手作限定", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2U5ZjBkOCIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM1ODZkMjAiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlOWYwZDgiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPk5BTkFDTzwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1MjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzU4NmQyMCI+5Lqs6YO957OW5p6c5bGL5omL5L2c6ZKl5YyZ5omjPC90ZXh0PgogICAgICA8dGV4dCB4PSIzMDAiIHk9IjU1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjNTg2ZDIwIiBvcGFjaXR5PSIuNzUiPuaXpeacrOebtOmCriDCtyDmraPlk4Hku6PotK08L3RleHQ+CiAgICA8L3N2Zz4="}, {"id": 44, "name": "浅草365日期护手霜", "category": "小众限定", "price": 128, "sales": 672, "brand": "asakusa", "desc": "生日日期包装", "image": "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiPgogICAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2U5ZjBkOCIvPgogICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8ZmlsdGVyIGlkPSJzIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iMTgiIHN0ZERldmlhdGlvbj0iMTgiIGZsb29kLW9wYWNpdHk9Ii4xOCIvPjwvZmlsdGVyPgogICAgICA8L2RlZnM+CiAgICAgIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjEyMCIgcj0iOTAiIGZpbGw9IiM1ODZkMjAiIG9wYWNpdHk9Ii4wOCIvPgogICAgICA8Y2lyY2xlIGN4PSIxMDUiIGN5PSI1MDAiIHI9IjEyMCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjA2Ii8+CiAgICAgIDxnIGZpbHRlcj0idXJsKCNzKSI+CiAgICAgICAgPHJlY3QgeD0iMTc1IiB5PSIxMTgiIHJ4PSIzNCIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIzMjAiIGZpbGw9IndoaXRlIi8+CiAgICAgICAgPHJlY3QgeD0iMTk1IiB5PSIxMzgiIHJ4PSIyNCIgd2lkdGg9IjIxMCIgaGVpZ2h0PSIyODAiIGZpbGw9IiNlOWYwZDgiLz4KICAgICAgICA8cmVjdCB4PSIyMTUiIHk9IjE3NSIgcng9IjE4IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjExMCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjkyIi8+CiAgICAgICAgPHJlY3QgeD0iMjQ1IiB5PSIzMTUiIHJ4PSIxMiIgd2lkdGg9IjExMCIgaGVpZ2h0PSI1OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgICAgIDwvZz4KICAgICAgPHRleHQgeD0iMzAwIiB5PSIyMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0id2hpdGUiPkFTQUtVU0E8L3RleHQ+CiAgICAgIDx0ZXh0IHg9IjMwMCIgeT0iNTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM1ODZkMjAiPua1heiNiTM2NeaXpeacn+aKpOaJi+mcnDwvdGV4dD4KICAgICAgPHRleHQgeD0iMzAwIiB5PSI1NTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzU4NmQyMCIgb3BhY2l0eT0iLjc1Ij7ml6XmnKznm7Tpgq4gwrcg5q2j5ZOB5Luj6LStPC90ZXh0PgogICAgPC9zdmc+"}];
+let activeCategory = "全部";
+let cart = [];
+let currentOrderText = "";
+
+let categories = [];
+
+function init() {
+  try {
+    const savedProducts = localStorage.getItem("japanSelectProducts");
+    if (savedProducts) {
+      const parsed = JSON.parse(savedProducts);
+      if (Array.isArray(parsed) && parsed.length) products.splice(0, products.length, ...parsed);
+    } else {
+      localStorage.setItem("japanSelectProducts", JSON.stringify(products));
+    }
+    const savedCart = localStorage.getItem("japanSelectCart");
+    if (savedCart) cart = JSON.parse(savedCart);
+  } catch (error) { console.warn("本地商品数据读取失败", error); }
+  categories = ["全部", ...new Set(products.map(p => p.category))];
+  document.getElementById("categories").innerHTML = categories.map(c =>
+    `<button class="category-btn ${c==="全部"?"active":""}" onclick="setCategory('${c}', this)">${c}</button>`
+  ).join("");
+  renderProducts();
+  renderCart();
+}
+
+function setCategory(category, el) {
+  activeCategory = category;
+  document.querySelectorAll(".category-btn").forEach(btn => btn.classList.remove("active"));
+  el.classList.add("active");
+  renderProducts();
+}
+
+function renderProducts() {
+  const list = activeCategory === "全部" ? products : products.filter(p => p.category === activeCategory);
+  document.getElementById("countText").textContent = `共 ${list.length} 件商品，全部在本页展示`;
+  document.getElementById("grid").innerHTML = list.map(p => `
+    <article class="card">
+      <img src="${p.image}" alt="${p.name}">
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="price-box">
+          <div class="price-line">
+            <span class="price-label">国内参考价</span>
+            <span class="domestic-price">¥${Number(p.domesticPrice || Math.ceil(p.price * 1.35 / 10) * 10).toLocaleString()}</span>
+          </div>
+          <div class="price-line overseas-line">
+            <span class="price-label">海外购价格</span>
+            <span class="overseas-price"><small>¥</small>${Number(p.price).toLocaleString()}</span>
+          </div>
+        </div>
+        <button class="add" onclick="addToCart(${p.id})">加入购物车</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  const existing = cart.find(item => item.id === id);
+  if (existing) existing.qty += 1;
+  else cart.push({...product, qty:1});
+  renderCart();
+  localStorage.setItem("japanSelectCart", JSON.stringify(cart));
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(x => x.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(x => x.id !== id);
+  renderCart();
+  localStorage.setItem("japanSelectCart", JSON.stringify(cart));
+}
+
+function removeItem(id) {
+  cart = cart.filter(x => x.id !== id);
+  renderCart();
+  localStorage.setItem("japanSelectCart", JSON.stringify(cart));
+}
+
+function renderCart() {
+  const qty = cart.reduce((sum, x) => sum + x.qty, 0);
+  const total = cart.reduce((sum, x) => sum + x.price * x.qty, 0);
+  document.getElementById("cartCount").textContent = qty;
+  document.getElementById("cartQty").textContent = qty;
+  document.getElementById("cartTotal").textContent = "¥" + total.toLocaleString();
+
+  document.getElementById("cartList").innerHTML = cart.length ? cart.map(x => `
+    <div class="cart-item">
+      <img src="${x.image}" alt="${x.name}">
+      <div>
+        <div class="cart-item-name">${x.name}</div>
+        <div class="cart-item-price">¥${x.price.toLocaleString()}</div>
+        <div class="qty">
+          <button onclick="changeQty(${x.id},-1)">−</button>
+          <span>${x.qty}</span>
+          <button onclick="changeQty(${x.id},1)">＋</button>
+        </div>
+      </div>
+      <button class="remove" onclick="removeItem(${x.id})">删除</button>
+    </div>
+  `).join("") : `<div class="empty">购物车为空</div>`;
+}
+
+function toggleCart() {
+  document.getElementById("drawer").classList.toggle("open");
+}
+
+function openCheckout() {
+  const modal = document.getElementById("checkoutModal");
+  const subtotal = cart.reduce((sum, x) => sum + x.price * x.qty, 0);
+  const qty = cart.reduce((sum, x) => sum + x.qty, 0);
+
+  document.getElementById("summaryKinds").textContent = cart.length;
+  document.getElementById("summaryQty").textContent = qty;
+  document.getElementById("summarySubtotal").textContent = "¥" + subtotal.toLocaleString();
+  document.getElementById("summaryTotal").textContent = "¥" + subtotal.toLocaleString();
+
+  document.getElementById("summaryList").innerHTML = cart.length ? `
+    <table class="summary-table">
+      <thead>
+        <tr><th>商品</th><th>数量</th><th>单价</th><th>小计</th></tr>
+      </thead>
+      <tbody>
+        ${cart.map(x => `
+          <tr>
+            <td>${x.name}</td>
+            <td>${x.qty}</td>
+            <td>¥${x.price.toLocaleString()}</td>
+            <td>¥${(x.price*x.qty).toLocaleString()}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  ` : `<div class="empty">暂无商品，请先加入购物车。</div>`;
+
+  document.getElementById("qrResult").classList.remove("show");
+  document.getElementById("qrBox").innerHTML = "";
+  modal.classList.add("open");
+}
+
+function closeCheckout() {
+  document.getElementById("checkoutModal").classList.remove("open");
+}
+
+
+function buildOrderText() {
+  const qty = cart.reduce((sum, x) => sum + x.qty, 0);
+  const total = cart.reduce((sum, x) => sum + x.price * x.qty, 0);
+
+  const lines = [
+    "日本代购订单清单",
+    "商品种类：" + cart.length,
+    "商品总数：" + qty,
+    "----------------"
+  ];
+
+  cart.forEach((x, index) => {
+    lines.push(
+      (index + 1) + ". " + x.name +
+      " ×" + x.qty +
+      "｜¥" + x.price.toLocaleString() +
+      "｜小计 ¥" + (x.price * x.qty).toLocaleString()
+    );
+  });
+
+  lines.push("----------------");
+  lines.push("商品金额：¥" + total.toLocaleString());
+  lines.push("国际运费：待确认");
+  lines.push("当前合计：¥" + total.toLocaleString());
+
+  return lines.join("\n");
+}
+
+function generateOrderQR() {
+  if (!cart.length) {
+    alert("请先加入商品。");
+    return;
+  }
+
+  currentOrderText = buildOrderText();
+  const encoded = encodeURIComponent(currentOrderText);
+
+  // DEMO 使用公开二维码生成服务。扫码内容是完整订单文字。
+  const qrUrl =
+    "https://api.qrserver.com/v1/create-qr-code/" +
+    "?size=500x500&margin=12&ecc=M&data=" + encoded;
+
+  document.getElementById("qrBox").innerHTML =
+    `<img src="${qrUrl}" alt="订单分享二维码">`;
+
+  const byteLength = new TextEncoder().encode(currentOrderText).length;
+  document.getElementById("qrNote").textContent =
+    "二维码包含 " + cart.length + " 种商品、" +
+    cart.reduce((sum, x) => sum + x.qty, 0) +
+    " 件商品。订单数据约 " + byteLength + " 字节。";
+
+  document.getElementById("qrResult").classList.add("show");
+  document.getElementById("qrResult").scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
+async function copyOrderText() {
+  if (!currentOrderText) currentOrderText = buildOrderText();
+  try {
+    await navigator.clipboard.writeText(currentOrderText);
+    alert("订单文字已复制。");
+  } catch (error) {
+    const area = document.createElement("textarea");
+    area.value = currentOrderText;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+    alert("订单文字已复制。");
+  }
+}
+
+init();
+</script>
+</body>
+</html>

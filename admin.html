@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>日选商店 · 商品管理</title>
+<style>
+:root{--bg:#fff4f5;--paper:#fff;--ink:#321e27;--muted:#806873;--line:#efd4db;--accent:#c72558;--dark:#95183e}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#fff8f7,#fdecef);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei",sans-serif}button,input,textarea,select{font:inherit}
+.top{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.topin{max-width:1180px;margin:auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-size:20px;font-weight:800}.brand small{display:block;color:var(--accent);font-size:10px;letter-spacing:.15em;margin-top:3px}.top a{color:var(--accent);text-decoration:none;font-weight:700}
+.wrap{max-width:1180px;margin:auto;padding:28px 20px 80px}.intro{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:22px}.intro h1{margin:0 0 6px;font-size:30px}.intro p{margin:0;color:var(--muted);font-size:13px}.actions{display:flex;flex-wrap:wrap;gap:8px}.btn{display:inline-flex;align-items:center;border:1px solid var(--line);background:#fff;color:var(--ink);text-decoration:none;padding:10px 14px;border-radius:10px;cursor:pointer}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn:hover{border-color:var(--accent)}
+.notice{display:none;margin:0 0 16px;padding:11px 14px;background:#eaf8ef;color:#20713c;border-radius:10px}.notice.show{display:block}.category-panel{margin:0 0 18px;padding:16px;background:#fff;border:1px solid var(--line);border-radius:16px}.category-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.category-head h2{margin:0;font-size:16px}.category-head p{margin:3px 0 0;color:var(--muted);font-size:12px}.category-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}.category-tag{display:inline-flex;align-items:center;gap:7px;padding:7px 9px 7px 12px;background:#fff3f5;border:1px solid var(--line);border-radius:999px;font-size:12px}.category-tag button{width:20px;height:20px;padding:0;border:0;border-radius:50%;background:#fff;color:#a94b65;cursor:pointer}.list{display:grid;gap:14px}
+.item{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;grid-template-columns:130px 1fr auto;gap:18px;box-shadow:0 8px 24px rgba(103,31,55,.06)}
+.photo{position:relative;width:130px;height:130px;border-radius:14px;overflow:hidden;background:#f8e7eb}.photo img{width:100%;height:100%;object-fit:cover}.upload{position:absolute;inset:auto 7px 7px;background:rgba(50,30,39,.82);color:#fff;text-align:center;padding:8px;border-radius:8px;font-size:12px;cursor:pointer}.upload input{display:none}
+.fields{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:5px}.field.wide{grid-column:1/-1}.field label{font-size:11px;color:var(--muted)}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff;color:var(--ink)}.field select{cursor:pointer}.field textarea{height:58px;resize:vertical}.delete{border:0;background:#fff0f2;color:#b51f48;border-radius:9px;padding:9px;cursor:pointer;align-self:start}
+.empty{text-align:center;padding:70px 20px;background:#fff;border:1px dashed var(--line);border-radius:18px;color:var(--muted)}
+@media(max-width:760px){.wrap{padding:18px 12px 70px}.intro{display:block}.actions{margin-top:14px}.item{grid-template-columns:92px 1fr;padding:12px;gap:12px}.photo{width:92px;height:92px}.fields{grid-template-columns:1fr 1fr}.field:first-child,.field.wide{grid-column:1/-1}.delete{grid-column:1/-1}.topin{padding:12px}.intro h1{font-size:24px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin"><div class="brand">商品管理<small>JAPAN SELECT ADMIN</small></div><a href="index.html">查看用户页面 →</a></div></header>
+<main class="wrap">
+  <section class="intro"><div><h1>管理全部商品</h1><p>可逐项修改，也可以下载 Excel 全量模板后批量编辑并导入。</p></div><div class="actions"><a class="btn" href="商品导入模板.xlsx" download>下载 Excel 模板</a><label class="btn primary">导入 Excel<input type="file" accept=".xlsx,.xls" hidden onchange="importExcel(event)"></label><button class="btn" onclick="addProduct()">＋ 新增商品</button><button class="btn" onclick="exportData()">导出备份</button><label class="btn">导入备份<input id="importFile" type="file" accept="application/json" hidden onchange="importData(event)"></label><button class="btn primary" onclick="saveAll()">保存全部</button></div></section>
+  <div class="notice" id="notice">已保存，用户页面现在可以看到最新内容。</div>
+  <section class="category-panel"><div class="category-head"><div><h2>商品分类</h2><p>商品编辑时可直接从下拉列表选择</p></div><button class="btn primary" onclick="addCategory()">＋ 添加分类</button></div><div class="category-tags" id="categoryTags"></div></section>
+  <section class="list" id="list"></section>
+</main>
+<script src="xlsx.full.min.js"></script>
+<script>
+const KEY="japanSelectProducts",CATEGORY_KEY="japanSelectCategories";let products=[],categories=[];
+const esc=s=>String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+function load(){try{products=JSON.parse(localStorage.getItem(KEY)||"[]");const saved=JSON.parse(localStorage.getItem(CATEGORY_KEY)||"[]");categories=[...new Set([...saved,...products.map(p=>p.category).filter(Boolean)])]}catch(e){products=[];categories=[]}render()}
+function categoryOptions(current){return [...new Set([...categories,current].filter(Boolean))].map(c=>`<option value="${esc(c)}" ${c===current?'selected':''}>${esc(c)}</option>`).join("")}
+function renderCategories(){const box=document.getElementById("categoryTags");box.innerHTML=categories.length?categories.map((c,i)=>`<span class="category-tag">${esc(c)}<button title="删除分类" onclick="removeCategory(${i})">×</button></span>`).join(""):'<span style="color:var(--muted);font-size:12px">暂无分类，请点击“添加分类”</span>'}
+function render(){renderCategories();const list=document.getElementById("list");if(!products.length){list.innerHTML='<div class="empty">暂无商品。请先打开一次用户页面载入原商品，或点击“新增商品”。</div>';return}list.innerHTML=products.map((p,i)=>`<article class="item">
+  <div class="photo"><img id="preview-${i}" src="${esc(p.image)}" alt=""><label class="upload">更换图片<input type="file" accept="image/*" onchange="setImage(${i},event)"></label></div>
+  <div class="fields">
+    <div class="field"><label>商品名称</label><input value="${esc(p.name)}" oninput="setVal(${i},'name',this.value)"></div>
+    <div class="field"><label>分类</label><select onchange="setVal(${i},'category',this.value)">${categoryOptions(p.category)}</select></div>
+    <div class="field"><label>海外购价格（人民币）</label><input type="number" min="0" value="${Number(p.price)||0}" oninput="setVal(${i},'price',this.value)"></div>
+    <div class="field"><label>国内参考价（人民币）</label><input type="number" min="0" value="${Number(p.domesticPrice)||Math.ceil((Number(p.price)||0)*1.35/10)*10}" oninput="setVal(${i},'domesticPrice',this.value)"></div>
+    <div class="field"><label>销量</label><input type="number" min="0" value="${Number(p.sales)||0}" oninput="setVal(${i},'sales',this.value)"></div>
+    <div class="field wide"><label>商品简介</label><textarea oninput="setVal(${i},'desc',this.value)">${esc(p.desc)}</textarea></div>
+  </div><button class="delete" onclick="removeProduct(${i})">删除</button></article>`).join("")}
+function setVal(i,k,v){products[i][k]=["price","domesticPrice","sales"].includes(k)?Number(v):v}
+function addCategory(){const name=prompt("请输入新分类名称");if(name===null)return;const value=name.trim();if(!value){alert("分类名称不能为空。");return}if(categories.includes(value)){alert("这个分类已经存在。");return}categories.push(value);localStorage.setItem(CATEGORY_KEY,JSON.stringify(categories));render()}
+function removeCategory(i){const name=categories[i],used=products.filter(p=>p.category===name).length;if(!confirm(used?`“${name}”正在被 ${used} 件商品使用。删除后这些商品会归入“未分类”，确定删除吗？`:`确定删除分类“${name}”吗？`))return;products.forEach(p=>{if(p.category===name)p.category="未分类"});categories.splice(i,1);if(used&&!categories.includes("未分类"))categories.push("未分类");localStorage.setItem(CATEGORY_KEY,JSON.stringify(categories));render()}
+function setImage(i,e){const file=e.target.files[0];if(!file)return;if(file.size>2*1024*1024){alert("图片建议小于 2MB，请压缩后再上传。");return}const r=new FileReader();r.onload=()=>{products[i].image=r.result;document.getElementById(`preview-${i}`).src=r.result};r.readAsDataURL(file)}
+function addProduct(){products.unshift({id:Date.now(),name:"新商品",category:"美妆彩妆",price:0,sales:0,brand:"",desc:"请输入商品简介",image:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f8e1e7'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%23b85b76' font-size='28'%3E上传商品图片%3C/text%3E%3C/svg%3E"});render();scrollTo({top:0,behavior:"smooth"})}
+function removeProduct(i){if(confirm(`确定删除“${products[i].name}”吗？`)){products.splice(i,1);render()}}
+function saveAll(){try{localStorage.setItem(KEY,JSON.stringify(products));localStorage.setItem(CATEGORY_KEY,JSON.stringify(categories));const n=document.getElementById("notice");n.classList.add("show");setTimeout(()=>n.classList.remove("show"),2600)}catch(e){alert("保存失败：图片数据可能太大。请缩小图片尺寸，或先导出备份。")}}
+function exportData(){const blob=new Blob([JSON.stringify(products,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="日选商店-商品备份.json";a.click();URL.revokeObjectURL(a.href)}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);if(!Array.isArray(data))throw 0;products=data;render();saveAll()}catch(err){alert("导入失败，请选择从本页面导出的 JSON 备份文件。")}};r.readAsText(f)}
+function importExcel(e){
+  const f=e.target.files[0];
+  if(!f)return;
+  if(typeof XLSX==="undefined"){alert("Excel 读取组件未加载，请重新打开商品管理页面后再试。");e.target.value="";return}
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const wb=XLSX.read(r.result,{type:"array"});
+      const sheet=wb.Sheets[wb.SheetNames[0]];
+      const matrix=XLSX.utils.sheet_to_json(sheet,{header:1,defval:"",raw:true});
+      const headerIndex=matrix.findIndex(row=>row.includes("商品ID")&&row.includes("商品名称")&&row.includes("价格（人民币）"));
+      if(headerIndex<0)throw new Error("未找到模板字段行");
+      const headers=matrix[headerIndex].map(v=>String(v).trim());
+      const rows=matrix.slice(headerIndex+1).map(row=>Object.fromEntries(headers.map((h,i)=>[h,row[i]??""]))).filter(x=>String(x["商品名称"]||"").trim());
+      if(!rows.length)throw new Error("模板中没有商品数据");
+      const old=new Map(products.map(p=>[String(p.id),p]));
+      const imported=rows.map((x,i)=>{
+        const id=String(x["商品ID"]||Date.now()+i);
+        const prev=old.get(id)||{};
+        return{id:isNaN(Number(id))?id:Number(id),name:String(x["商品名称"]).trim(),category:String(x["分类"]||"其他").trim(),price:Number(x["价格（人民币）"]||0),sales:Number(x["销量"]||0),brand:String(x["品牌"]||"").trim(),desc:String(x["商品简介"]||"").trim(),image:String(x["图片网址"]||"").trim()||prev.image||"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f8e1e7'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%23b85b76' font-size='28'%3E上传商品图片%3C/text%3E%3C/svg%3E"};
+      });
+      products=imported;
+      categories=[...new Set([...categories,...products.map(p=>p.category).filter(Boolean)])];
+      localStorage.setItem(CATEGORY_KEY,JSON.stringify(categories));
+      localStorage.setItem(KEY,JSON.stringify(products));
+      render();
+      alert(`已成功导入 ${products.length} 件商品。请打开用户页面刷新查看。`);
+    }catch(err){
+      console.error(err);
+      alert("导入失败："+(err.message||"请使用本页面下载的 Excel 模板，并保留8个字段名称。"));
+    }
+    e.target.value="";
+  };
+  r.onerror=()=>{alert("无法读取这个文件，请重新保存为 .xlsx 后再试。");e.target.value=""};
+  r.readAsArrayBuffer(f);
+}
+load();
+</script>
+</body></html>
