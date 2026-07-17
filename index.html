@@ -471,11 +471,11 @@ button{font:inherit}
 
 <section class="category-filter" aria-label="商品分类筛选">
   <div class="category-level">
-    <span class="category-label">一级分类</span>
+    <span class="category-label">商品分类</span>
     <div class="categories" id="categories"></div>
   </div>
   <div class="category-level" id="secondaryCategoryRow" hidden>
-    <span class="category-label">二级分类</span>
+    <span class="category-label">细分品类</span>
     <div class="subcategories" id="subcategories"></div>
   </div>
 </section>
@@ -535,14 +535,34 @@ let activePrimaryCategory = "全部";
 let activeSecondaryCategory = "全部";
 let cart = [];
 let currentOrderText = "";
+let publishedCategories = [];
+
+const DEFAULT_CATEGORIES = [
+  "护肤/洁面卸妆","护肤/化妆水","护肤/精华液","护肤/乳液面霜","护肤/面膜","护肤/防晒","护肤/眼唇护理","护肤/护肤套装",
+  "彩妆/妆前隔离","彩妆/粉底遮瑕","彩妆/定妆","彩妆/眼妆","彩妆/唇妆","彩妆/腮红修容","彩妆/美妆工具",
+  "洗护/洗发护发","洗护/头皮护理","洗护/沐浴清洁","洗护/口腔护理",
+  "身体护理/身体乳霜","身体护理/手足护理","身体护理/脱毛护理","身体护理/止汗香体",
+  "香氛/女士香水","香氛/男士香水","香氛/身体香氛","香氛/家居香氛",
+  "健康个护/营养保健","健康个护/眼部护理","健康个护/女性护理","健康个护/日常护理"
+];
 
 function splitCategory(category) {
   const parts = String(category || "未分类").split("/").map(v => v.trim()).filter(Boolean);
   return {primary: parts[0] || "未分类", secondary: parts.slice(1).join("/") || "其他"};
 }
 
+function getAvailableCategories() {
+  let saved = [];
+  try {
+    const parsed = JSON.parse(localStorage.getItem("japanSelectCategories") || "[]");
+    if (Array.isArray(parsed)) saved = parsed;
+  } catch (error) { console.warn("分类数据读取失败", error); }
+  return [...new Set([...DEFAULT_CATEGORIES, ...publishedCategories, ...saved, ...products.map(p => p.category).filter(Boolean)])];
+}
+
 function renderCategoryFilters() {
-  const primaryCategories = ["全部", ...new Set(products.map(p => splitCategory(p.category).primary))];
+  const availableCategories = getAvailableCategories();
+  const primaryCategories = ["全部", ...new Set(availableCategories.map(c => splitCategory(c).primary))];
   if (!primaryCategories.includes(activePrimaryCategory)) activePrimaryCategory = "全部";
   document.getElementById("categories").innerHTML = primaryCategories.map(c =>
     `<button class="category-btn ${c===activePrimaryCategory?"active":""}" onclick="setPrimaryCategory(decodeURIComponent('${encodeURIComponent(c)}'))">${c}</button>`
@@ -556,8 +576,8 @@ function renderCategoryFilters() {
     box.innerHTML = "";
     return;
   }
-  const secondaryCategories = ["全部", ...new Set(products
-    .map(p => splitCategory(p.category))
+  const secondaryCategories = ["全部", ...new Set(availableCategories
+    .map(c => splitCategory(c))
     .filter(c => c.primary === activePrimaryCategory)
     .map(c => c.secondary))];
   if (!secondaryCategories.includes(activeSecondaryCategory)) activeSecondaryCategory = "全部";
@@ -599,8 +619,19 @@ async function loadPublishedProducts() {
   }
 }
 
+async function loadPublishedCategories() {
+  try {
+    const response = await fetch(`categories.json?v=${Date.now()}`, {cache:"no-store"});
+    if (!response.ok) return;
+    const data = await response.json();
+    if (Array.isArray(data)) publishedCategories = data.filter(Boolean);
+  } catch (error) {
+    console.info("暂未找到线上分类数据，继续使用默认分类。", error);
+  }
+}
+
 async function init() {
-  await loadPublishedProducts();
+  await Promise.all([loadPublishedProducts(), loadPublishedCategories()]);
   try {
     const savedProducts = localStorage.getItem("japanSelectProducts");
     if (savedProducts) {
@@ -633,10 +664,11 @@ function setSecondaryCategory(category) {
 function getProductDisplay(p) {
   const fullName = String(p.name || "未命名商品").trim();
   const capacityMatch = fullName.match(/(?:\d+(?:\.\d+)?\s*(?:ml|mL|ML|g|G|kg|KG|枚|粒|片|支|个|盒|包|瓶|cm|CM))(?:\s*[×xX]\s*\d+)?/);
-  const capacity = String(p.capacity || capacityMatch?.[0] || "规格以商品详情为准").trim();
+  const capacity = String(p.capacity || capacityMatch?.[0] || "规格待补充").trim();
   let brand = String(p.brand || "").trim();
   if (!brand) brand = fullName.split(/[\s·・]/)[0] || "日本精选";
-  let title = fullName;
+  let title = String(p.productName || "").trim() || fullName;
+  if (p.productName) return {brand,title,capacity};
   const brandPattern = brand.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
   title = title.replace(new RegExp(`^${brandPattern}[\\s·・-]*`,"i"),"").trim();
   if (capacityMatch) title = title.replace(capacityMatch[0],"").replace(/[\s·・-]+$/g,"").trim();
