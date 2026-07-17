@@ -561,7 +561,7 @@ function getAvailableCategories() {
 }
 
 function renderCategoryFilters() {
-  const availableCategories = getAvailableCategories();
+  const availableCategories = [...new Set(products.map(p => p.category).filter(Boolean))];
   const primaryCategories = ["全部", ...new Set(availableCategories.map(c => splitCategory(c).primary))];
   if (!primaryCategories.includes(activePrimaryCategory)) activePrimaryCategory = "全部";
   document.getElementById("categories").innerHTML = primaryCategories.map(c =>
@@ -576,11 +576,11 @@ function renderCategoryFilters() {
     box.innerHTML = "";
     return;
   }
-  const secondaryCategories = ["全部", ...new Set(availableCategories
+  const secondaryCategories = [...new Set(availableCategories
     .map(c => splitCategory(c))
     .filter(c => c.primary === activePrimaryCategory)
     .map(c => c.secondary))];
-  if (!secondaryCategories.includes(activeSecondaryCategory)) activeSecondaryCategory = "全部";
+  if (!secondaryCategories.includes(activeSecondaryCategory)) activeSecondaryCategory = secondaryCategories[0] || "";
   row.hidden = false;
   box.innerHTML = secondaryCategories.map(c =>
     `<button class="category-btn ${c===activeSecondaryCategory?"active":""}" onclick="setSecondaryCategory(decodeURIComponent('${encodeURIComponent(c)}'))">${c}</button>`
@@ -650,7 +650,7 @@ async function init() {
 
 function setPrimaryCategory(category) {
   activePrimaryCategory = category;
-  activeSecondaryCategory = "全部";
+  activeSecondaryCategory = category === "全部" ? "全部" : "";
   renderCategoryFilters();
   renderProducts();
 }
