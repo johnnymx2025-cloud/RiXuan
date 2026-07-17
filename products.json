@@ -6,6 +6,14 @@
     "capacity": "230ml",
     "category": "护肤/精华液",
     "price": 1280,
+    "domesticPrice": 1730,
+    "variants": [
+      {
+        "capacity": "230ml",
+        "price": 1280,
+        "domesticPrice": 1730
+      }
+    ],
     "sales": null,
     "brand": "SK-II",
     "desc": "SK-II明星精华，富含90%以上Pitera™成分，帮助改善肤质、提亮肤色、细腻毛孔，适合日常护肤及送礼。",
